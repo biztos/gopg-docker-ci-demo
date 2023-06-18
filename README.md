@@ -12,6 +12,8 @@ and my even artier [art newsletter](https://severalartists.com/).  Thank you!
 ## The Plan
 
 * A Go module at the top of the tree with submodules below it.
+* A simple Postgres database it interacts with.
+* Creation of the test table for every test run.
 * Testing via `go test ./...` &c.
 * Coverage via Coveralls unless I get a better idea
 
