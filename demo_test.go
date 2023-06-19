@@ -23,3 +23,10 @@ func TestNewClientErrorNoUrl(t *testing.T) {
 
 	assert.ErrorContains(err, "DATABASE_URL")
 }
+
+func TestDeliberateFail(t *testing.T) {
+
+	assert := assert.New(t)
+
+	assert.True(false, "this will fail")
+}
