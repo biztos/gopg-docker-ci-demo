@@ -1,11 +1,12 @@
-# OK... maybe better to NOT use docker?  because it seems like the setup here
-# is fast except for starting pg, which is slow (why?).
+# Hmm, better with image or without image?  Seems fine here without, and if
+# not running a custom image what's the point?
 name: Go/Pg Demo CI
 on: push
 
 jobs:
   test-job:
     runs-on: ubuntu-latest
+    image: golang
 
     services:
       postgres:
