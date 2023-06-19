@@ -1,5 +1,15 @@
 # Hmm, better with image or without image?  Seems fine here without, and if
 # not running a custom image what's the point?
+#
+# Coverage is a bit tricky.  Have some badge-makers and so on... or can just
+# upload to coveralls for a public repo.
+#
+# Makes me wonder, is there an easier way to do this?  Maybe make a simple
+# graph in Javascript showing all the functions, or something?  More work than
+# I have time for, but anyway I want a solution here that will give me access
+# somewhere, anywhere, online to the coverage report; and also give me a damn
+# badge!  Ideally without using crashy marketplace actions, nor wonky setups,
+# nor external services.
 name: Go/Pg Demo CI
 on: push
 
@@ -33,14 +43,27 @@ jobs:
         with:
           go-version: '^1.20.1'
 
+      # NOTE: separate build and test sections are nice for compartmentalizing
+      # the results, but also a waste of time.  If every second counts, then
+      # just go with the coverage test.
+      - name: Build
+        run: go build ./...
+
       - name: Run tests
-        run: go test ./...
+        run: go test -v ./...
         env:
           DATABASE_URL: postgres://postgres:postgres@localhost:5432/postgres
 
-      - name: Update coverage report
-        uses: ncruces/go-coverage-report@v0
+      - name: Generate coverage profile
+        run: go test -coverprofile=cover.out ./...
+        env:
+          DATABASE_URL: postgres://postgres:postgres@localhost:5432/postgres
+
+      - name: Generate HTML coverage report
+        run: go tool cover -html=cover.out -o=cover.html
+
+      - name: Upload Go coverage report
+        uses: actions/upload-artifact@v3
         with:
-          report: 'true'
-          chart: 'true'
-          amend: 'false'
+          name: Go-coverage
+          path: cover.html
