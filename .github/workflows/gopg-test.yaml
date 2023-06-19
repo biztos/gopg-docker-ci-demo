@@ -1,0 +1,40 @@
+name: Go/Pg Demo CI
+on: push
+
+jobs:
+  test-job:
+    runs-on: ubuntu-latest
+
+    services:
+      postgres:
+        image: postgres
+
+        env:
+          POSTGRES_PASSWORD: postgres
+          POSTGRES_USER: postgres
+          POSTGRES_DB: postgres
+
+        options: >-
+          --health-cmd pg_isready
+          --health-interval 10s
+          --health-timeout 5s
+          --health-retries 5
+        ports:
+          - 5432:5432
+
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v3
+
+      - name: Set up Go
+        uses: actions/setup-go@v4
+        with:
+          go-version: '^1.20.1'
+
+      - name: Run tests
+        run: go test ./...
+        env:
+          DATABASE_URL: postgres://postgres:postgres@localhost:5432/postgres
+
+# OK lovely if it works, but we still need to deal with test failures and
+# the coverage output once we do that.
