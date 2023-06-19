@@ -43,9 +43,16 @@ jobs:
         with:
           go-version: '^1.20.1'
 
+      # Download (hopefully cached) dependencies in a separate step so we do
+      # not get confused about how long build/test steps actually take.
+      - name: Download dependencies
+        run: go mod download
+
       # NOTE: separate build and test sections are nice for compartmentalizing
       # the results, but also a waste of time.  If every second counts, then
-      # just go with the coverage test.
+      # just go with the coverage test.  With complex database testing this
+      # may well be the case, because the Git postgres service appears to be
+      # very slow, compared to my local run which takes about half a second.
       - name: Build
         run: go build ./...
 
@@ -62,8 +69,19 @@ jobs:
       - name: Generate HTML coverage report
         run: go tool cover -html=cover.out -o=cover.html
 
+      # Sticking the coverage report in the artifacts is good enough for some
+      # cases, like low-volume indie projects, BUT: if you're working on a
+      # team, eventually there will be something to investigate in this file
+      # that is not the same as the results you're getting locally, and then
+      # it would be nice to have everything more easily navigable.
+      #
+      # Am I reinventing coveralls here?  Wonder how hard it would really be
+      # to have a simple results browser that lets you drill down.
+      #
+      # But anyway, for now, this is sufficient to tick the box.  Now where is
+      # my badge?!
       - name: Upload Go coverage report
         uses: actions/upload-artifact@v3
         with:
-          name: Go-coverage
+          name: Go-coverage-report
           path: cover.html
