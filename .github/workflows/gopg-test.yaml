@@ -45,10 +45,3 @@ jobs:
           report: 'true'
           chart: 'true'
           amend: 'false'
-      if: |
-        matrix.os == 'ubuntu-latest' &&
-        github.event_name == 'push'  
-      continue-on-error: true
-
-# OK lovely if it works, but we still need to deal with test failures and
-# the coverage output once we do that.
