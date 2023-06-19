@@ -1,3 +1,5 @@
+# OK... maybe better to NOT use docker?  because it seems like the setup here
+# is fast except for starting pg, which is slow (why?).
 name: Go/Pg Demo CI
 on: push
 
@@ -35,6 +37,17 @@ jobs:
         run: go test ./...
         env:
           DATABASE_URL: postgres://postgres:postgres@localhost:5432/postgres
+
+      - name: Update coverage report
+        uses: ncruces/go-coverage-report@v0
+        with:
+          report: 'true'
+          chart: 'true'
+          amend: 'false'
+      if: |
+        matrix.os == 'ubuntu-latest' &&
+        github.event_name == 'push'  
+      continue-on-error: true
 
 # OK lovely if it works, but we still need to deal with test failures and
 # the coverage output once we do that.
