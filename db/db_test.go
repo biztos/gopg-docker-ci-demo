@@ -109,17 +109,18 @@ func (suite *DbTestSuite) SetupSuite() {
 
 }
 
-func (suite *DbTestSuite) TeardownSuite() {
+func (suite *DbTestSuite) TearDownSuite() {
 
 	require := suite.Require()
 
-	// Thou Shalt Not Leave Turds!
-	if suite.Client != nil {
-		sql := fmt.Sprintf("DROP TABLE IF EXISTS %s;", suite.Client.Table)
-		_, err := suite.Client.Pool.Exec(context.Background(), sql)
-		require.NoError(err)
+	require.NotNil(suite.Client, "client")
+	require.NotNil(suite.Client.Pool, "client pool")
 
-	}
+	sql := fmt.Sprintf("DROP TABLE IF EXISTS %s;", suite.Client.Table)
+
+	fmt.Println(sql)
+	_, err := suite.Client.Pool.Exec(context.Background(), sql)
+	require.NoError(err)
 
 }
 
